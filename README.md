@@ -1,49 +1,174 @@
-Welcome to the AAPLE stock market forecasting project!
+# AAPLE stock market forecasting using Machine Learning
 
-This project aims to predict the future price of AAPLE stock using two machine learning models: Long Short-Term Memory (LSTM) and Random Forest Regressor.
+*In this project, we use Python and machine learning algorithms to analyze and forecast the stock prices of Apple Inc. (AAPL). The project is divided into several steps:*
 
-## Prerequisites
-Before you begin, make sure you have the following installed on your machine:
+## 1- Preparing historic pricing data: 
 
-Python 3.6 or higher
-NumPy
-pandas
-scikit-learn
-Keras (with TensorFlow backend)
-You will also need to have access to historical stock price data for AAPLE. You can obtain this data from a financial database such as Yahoo Finance or Google Finance.
+We clean and prepare the stock price data for analysis. This process, also known as preprocessing, is crucial for ensuring that the data is ready for analysis and modeling.
 
-## Getting Started
-Clone this repository to your local machine:
+To perform this step, we will need to import the following libraries:
 
-git clone https://github.com/isbainemohamed/AAPLE-stock-market-forecasting
-Navigate to the root directory of the repository:
+* NumPy: A library for working with large, multi-dimensional arrays and matrices of numerical data.
+* pandas: A library for fast, flexible, and expressive data manipulation and analysis.
 
-cd aapl-stock-forecasting
-Download the stock price data and place it in the data directory. Make sure to name the file aapl.csv.
+To install these libraries, you can use the following command:
 
-Run the following command to install the required packages:
+```bash
+pip install numpy pandas
+```
+
+Here is an example of how we might load and prepare the data using these libraries:
+
+```python
+import numpy as np
+import pandas as pd
+```
+
+```python
+# Load stock price data into a Pandas DataFrame
+df = pd.read_csv('data/aapl_stock_prices.csv')
+
+# Handle missing values
+df = df.dropna()
+
+# Convert 'Date' column to datetime
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Create new column 'Year'
+df['Year'] = df['Date'].dt.year
+```
 
 
-pip install -r requirements.txt
+## 2- Exploratory data analysis: 
 
-Run the following command to train the LSTM model:
+We identify trends, patterns, or seasonalities in the data. This step is important for gaining insights into the data and understanding the underlying relationships within it.
 
-python train_lstm.py
-Run the following command to train the Random Forest Regressor model:
+To perform this step, we will need to import the following library:
 
-python train_random_forest.py
-Run the following command to make predictions using the trained models:
+* matplotlib: A library for creating static, animated, and interactive visualizations.
+To install this library, you can use the following command:
 
-python predict.py
+```bash
+pip install matplotlib
+```
 
+Here is an example of how we might use these libraries to perform exploratory data analysis:
 
-## Evaluation
-The performance of the models will be evaluated using mean squared error (MSE). You can find the MSE for each model in the output of the training scripts (train_lstm.py and train_random_forest.py).
+```python
+# Calculate summary statistics
+df.describe()
 
-## Further Work
-There are many ways you could extend this project, including:
+# Group data by year and calculate mean
+df.groupby('Year').mean()
 
-Testing other machine learning models (e.g. support vector regression, gradient boosting)
-Incorporating additional features (e.g. news articles, technical indicators)
-Implementing a neural network model from scratch (instead of using Keras)
-I hope you find this project useful! If you have any questions or suggestions, feel free to open an issue on GitHub.
+# Plot stock price over time
+import matplotlib.pyplot as plt
+plt.plot(df['Date'], df['Close'])
+plt.xlabel('Year')
+plt.ylabel('Stock Price')
+plt.show()
+```
+
+## 3- Data visualization: 
+
+We use various techniques to better understand the data and identify patterns or trends. This step is important for communicating the insights and findings from the data analysis.
+
+To perform this step, we will need to import the following library:
+
+seaborn: A library for creating statistical graphics and visualizations.
+To install this library, you can use the following command:
+
+```bash
+pip install seaborn
+```
+
+Here is an example of how we might use these libraries to create data visualizations:
+
+```python
+import seaborn as sns
+
+# Create box plot to compare stock prices by year
+sns.boxplot(x='Year', y='Close', data=df)
+plt.show()
+
+# Create heatmap to show correlations between features
+corr = df.corr()
+sns.heatmap(corr)
+plt.show()
+```
+## 4-Model development: 
+
+We develop four different forecasting models using the following algorithms: Long Short-Term Memory (LSTM), Linear Regression with pandas_ta, Support Vector Machines (SVM), and Autoregressive Integrated Moving Average (ARIMA).
+
+To perform this step, we will need to import the following libraries:
+
+* scikit-learn: A library for machine learning in Python.
+* pandas_ta: A library for technical analysis and visualization of financial data in Pandas.
+* ta-lib: A library for technical analysis of financial market data.
+* Keras (with TensorFlow backend): A library for building and training neural networks.
+
+To install these libraries, you can use the following commands:
+
+```bash
+pip install scikit-learn pandas_ta ta-lib
+pip install keras tensorflow
+```
+
+Here is an example of how we might use these libraries to develop a machine learning model:
+
+```python
+# Select features
+X = df[['Year', 'Open', 'High', 'Low', 'Close']]
+y = df['Close']
+
+# Split data into training and testing sets
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Train model
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+```
+
+## 5- Model performance: 
+
+We compare the performance of the different models and discuss the implications of our findings. This step is important for evaluating the accuracy and effectiveness of the models and deciding which one to use for forecasting.
+
+To perform this step, we will need to import the following library:
+
+* scikit-learn: A library for machine learning in Python.
+
+To install this library, you can use the following command:
+
+```bash
+pip install scikit-learn
+```
+
+Here is an example of how we might use these libraries to compare model performance:
+
+```python
+# Calculate evaluation metric for each model
+from sklearn.metrics import mean_squared_error
+mse1 = mean_squared_error(y_test, model1.predict(X_test))
+mse2 = mean_squared_error(y_test, model2.predict(X_test))
+mse3 = mean_squared_error(y_test, model3.predict(X_test))
+mse4 = mean_squared_error(y_test, model4.predict(X_test))
+
+# Create bar plot to compare model performance
+import matplotlib.pyplot as plt
+plt.bar(['Model 1', 'Model 2', 'Model 3', 'Model 4'], [mse1, mse2, mse3, mse4])
+plt.ylabel('Mean Squared Error')
+plt.show()
+```
+
+Once you have the required libraries installed, you can clone this repository and navigate to the project directory. From there, you can run the Jupyter notebook "Final document - Technical Analysis of AAPL Stocks.ipynb" to see the code and results of the project.
+
+The project is organized into the following directories:
+
+data/: Contains the stock price data.
+notebooks/: Contains the Jupyter notebook with the code and results of the project.
+
+This project was created by [Mohamed Isbaine](https://www.linkedin.com/in/mohamed-isbaine/)
+
+Feel free to contact me if anything is wrong or if anything needs to be changed: isbainemouhamed@gmail.com
